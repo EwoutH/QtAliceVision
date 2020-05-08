@@ -1,0 +1,29 @@
+image: Visual Studio 2019
+configuration: Release
+
+environment:
+  QT5: C:\Qt\5.14\msvc2017_64   # Is still available on the VS 2019 image
+  APPVEYOR_SAVE_CACHE_ON_ERROR: true
+
+install:
+  - vcpkg list
+ 
+before_build:
+    - md build
+    - cd build
+    - cmake .. -A x64
+            -DCMAKE_BUILD_TYPE=%CONFIGURATION%
+            -DCMAKE_PREFIX_PATH=%QT5%
+            -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+build:
+  project: $(APPVEYOR_BUILD_FOLDER)\build\INSTALL.vcxproj
+  verbosity: minimal
+
+cache:
+  c:\tools\vcpkg\installed\
+ 
+artifacts:
+ - path: build
+ - path: build\src\Release\qtAliceVisionPlugin.dll
+ - path: build\src\Release\qtAliceVisionPlugin.lib
